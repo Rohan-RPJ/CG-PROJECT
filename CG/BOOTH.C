@@ -7,6 +7,10 @@
 #define o 8
 #define dt 2
 #define n 4
+#define dig1col RED
+#define dig0col GREEN
+#define blkcol WHITE
+#define bgcol BLACK
 #define tc 8000
 //tc is time constant for the delay
 
@@ -37,10 +41,46 @@ void rightshift()
 
 }
 
+void drawDig0(int x,int y,int col)
+{
+	int i=0;
+	//thickness of 0
+	setcolor(col);
+	for(;i<dt;i++)
+	{
+		x+=i;
+		y+=i;
+		rectangle(x+w/2-l/2,y+w/2-l/2-o/2,x+w/2+l/2,y+w/2+l/2+o/2);
+	}
+	setcolor(blkcol);
+}
+
+void drawDig1(int x,int y,int col)
+{
+	int i=0;
+	int y1=y+w/2-l/2-o/2;
+	int y2=y+w/2+l/2+o/2;
+	x=x+w/2-dt/2;
+	setcolor(col);
+	for(;i<=dt;i++)
+	{
+		x++;
+		line(x,y1,x,y2);
+		//setcolor(GREEN);
+		//delay();
+	}
+	setcolor(blkcol);
+}
+
 void makeBlock(int x,int y)
 {
-	//setfillstyle(SOLID_FILL,BLACK);
-	//floodfill(x+1,y+1,WHITE);
+	//floodfill(x+1,y+1,blkcol);
+	int current_dig=getpixel(x+w/2,y+w/2);
+
+	if(current_dig==dig1col)
+		drawDig1(x,y,bgcol);
+	else
+		drawDig0(x,y,bgcol);
 	rectangle(x,y,x+w,y+w);
 }
 
@@ -51,32 +91,7 @@ void makeReg(int bitlen,int x,int y)
 	{
 		makeBlock(x,y);
 		x+=w;
-	}
-}
-
-void drawDig0(int x,int y)
-{
-	int i=0;
-	//thickness of 0
-       //	setcolor(GREEN);
-	for(;i<dt;i++)
-	{
-		x+=i;
-		y+=i;
-		rectangle(x+w/2-l/2,y+w/2-l/2-o/2,x+w/2+l/2,y+w/2+l/2+o/2);
-	}
-}
-
-void drawDig1(int x,int y)
-{
-	int i=0;
-       //	setcolor(GREEN);
-	for(;i<=dt;i++)
-	{
-		x+=i;
-		line(x+w/2-dt/2,y+w/2-l/2-o/2,x+w/2-dt/2,y+w/2+o/2);
-	}
-     //	setcolor(WHITE);
+  }
 }
 
 void makeScreen(int bitlen,int x,int y)
@@ -102,22 +117,20 @@ void makeScreen(int bitlen,int x,int y)
 
 void initScreen(int A[n],int Q[n],int M[n],int x,int y)
 {
-  //	cleardevice();
 	int i=0;
-       //	A[0]=0,A[1]=0,A[2]=0,A[3]=0;
+	//A[0]=0,A[1]=0,A[2]=0,A[3]=0;
 	//M[0]=0,M[1]=1,M[2]=0,M[3]=1;
 	//Q[0]=1,Q[1]=1,Q[2]=0,Q[3]=1;
 	//checking the parameter values
-	cleardevice();
 	makeScreen(n,x,y);
 
 	//putting content in accumulator
 	for(i=0;i<n;i++)
 	{
 		if(A[i]==0)
-			drawDig0(x,y);
+			drawDig0(x,y,dig0col);
 		else
-			drawDig1(x,y);
+			drawDig1(x,y,dig1col);
 		x+=w;
 	}
 
@@ -127,18 +140,18 @@ void initScreen(int A[n],int Q[n],int M[n],int x,int y)
 	for(i=0;i<n;i++)
 	{
 		if(Q[i]==0)
-			drawDig0(x,y);
+			drawDig0(x,y,dig0col);
 		else
-			drawDig1(x,y);
+			drawDig1(x,y,dig1col);
 		x+=w;
 	}
 
 	x+=w;//moving to Q-1
 	{
 		if( reg[2*n]==0)
-			drawDig0(x,y);
+			drawDig0(x,y,dig0col);
 		else
-			drawDig1(x,y);
+			drawDig1(x,y,dig1col);
 		x+=w;
 	}
 
@@ -148,12 +161,13 @@ void initScreen(int A[n],int Q[n],int M[n],int x,int y)
 	for(i=0;i<n;i++)
 	{
 		if(M[i]==0)
-			drawDig0(x,y);
+			drawDig0(x,y,dig0col);
 		else
-			drawDig1(x,y);
+			drawDig1(x,y,dig1col);
 		x+=w;
 	}
 }
+
 void add(int *temp1, int *temp2)
 {       int i;
 	int c=0;
@@ -219,8 +233,6 @@ void convert2(int num, int *temp)
     printf("Converted %d:\n",t);
 	for(i=0;i<n;i++)
 		printf("%d\t",temp[i]);
-
-
 }
 
 void input()
@@ -255,6 +267,7 @@ void input()
 	for(i=0;i<n;i++)
 		printf("%d",q[i]);
 }
+
 char cmpmsg[]="Comparing Q0Q-1....";
 char nmsg[]="";
 char negq[]="Q0Q-1 10...";
@@ -340,25 +353,30 @@ void booths(int x,int y)
 	delay(tc/2);
 	initScreen(acc,q,m,x,y);
 }
+
 int main()
 {
 	int gd=DETECT,gm=0;
-	int xi=50,yi=50,xtemp,ytemp,mul,mpr;
+	int xi=5,yi=50,xtemp,ytemp,mul,mpr;
 	int j,i=0;
- //      clrscr();
-       //	cleardevice();
+	clrscr();
 	setgraphbufsize(16*1024);
-
 	detectgraph(&gd,&gm);
 	initgraph(&gd,&gm,"C:\\TURBOC3\\BGI");
-	setbkcolor(BLACK);
+	setbkcolor(bgcol);
+	//textcolor(WHITE);
+	//textbackground(bgcol);
 	cleardevice();
+	delay(tc);
        //	 printf("Enter m and q:");
        //	 scanf("%d%d",&mul,&mpr);
        // printf("\n %x is add..\n",m);
        //	 convert2(mul,&m[0]);
        //	 convert2(mpr,&q[0]);
 	input();
+	delay(2000);
+	clrscr();
+	cleardevice();
 	/*
 	xtemp=xi,ytemp=yi;
 	makeReg(4,xi,yi);
@@ -380,6 +398,7 @@ int main()
 		rightshift();
 	}*/
        //	initScreen(acc,q,m,5,50+3*w+3*o);
+
  //	cleardevice();
    booths(5,50);
 	/*
