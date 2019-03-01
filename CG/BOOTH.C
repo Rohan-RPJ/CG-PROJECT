@@ -7,11 +7,11 @@
 #define o 8
 #define dt 2
 #define n 4
-#define tc 200
 #define dig1col RED
 #define dig0col GREEN
 #define blkcol WHITE
 #define bgcol BLACK
+#define tc 8000
 //tc is time constant for the delay
 
 int acc[n]={0},m[n],q[n], mc[n];
@@ -91,7 +91,7 @@ void makeReg(int bitlen,int x,int y)
 	{
 		makeBlock(x,y);
 		x+=w;
-	}
+  }
 }
 
 void makeScreen(int bitlen,int x,int y)
@@ -167,6 +167,7 @@ void initScreen(int A[n],int Q[n],int M[n],int x,int y)
 		x+=w;
 	}
 }
+
 void add(int *temp1, int *temp2)
 {       int i;
 	int c=0;
@@ -232,8 +233,6 @@ void convert2(int num, int *temp)
     printf("Converted %d:\n",t);
 	for(i=0;i<n;i++)
 		printf("%d\t",temp[i]);
-
-
 }
 
 void input()
@@ -269,50 +268,97 @@ void input()
 		printf("%d",q[i]);
 }
 
+char cmpmsg[]="Comparing Q0Q-1....";
+char nmsg[]="";
+char negq[]="Q0Q-1 10...";
+char posq[]="Q0Q-1 01...";
+char addm[]="Adding M to A";
+char subm[]="Adding -M to A";
+
 void booths(int x,int y)
 {
-	int i;
+	int i,j;
+
 	initScreen(acc,q,m,x,y);
+	delay(tc);
 	for(i=0;i<n;i++)
-	{
-		printf("Comparing Q0Q-1....");
+	{       sprintf(nmsg,"N:%d\n",n-i);
+		outtext(cmpmsg);
 		if(q[n-1]!=reg[2*n])
 		{
 			if(q[n-1]>reg[2*n])
 			{
-				printf("Transition from 0 to 1...\n");
-				printf("A<-A-M");
+				gotoxy(0,0);
+
+
+				outtext(negq);
+				delay(1000);
+				outtext(subm);
 				add(acc,mc);
-				printf("Added");
-				initScreen(acc,q,m,x,y+(i+1)*w+(i+1)*o);
-				delay(tc);
-			      //	return 0;
+				delay(tc/4);
+				initScreen(acc,q,m,x,y);
+
+			       /*	printf("-M is :\n");
+				for(j=0;j<n;j++)
+					printf("%d\t",mc[j]);
+
+				printf("A<- A-M\n");
+			       /*	printf("A+(-M):\n");
+				for(j=0;j<n;j++)
+					printf("%d\t",acc[j]);*/
+				delay(tc/2);
 			}
 			else
 			{
-				printf("Transition from 1 to 0...\n");
-				printf("A<-A+M");
+				gotoxy(0,0);
+
+				outtext(posq);
+				delay(1000);
+				outtext(addm);
+				delay(3000);
 				add(acc,m);
-				initScreen(acc,q,m,x,y+(i+1)*w+(i+1)*o);
+				initScreen(acc,q,m,x,y);
+
+			     /*	printf("-M is :\n");
+				for(j=0;j<n;j++)
+					printf("%d\t",mc[j]);
+
+				printf("\nA<A+M\n");
+			      *	printf("A+(-M):\n");
+				for(j=0;j<n;j++)
+					printf("%d\t",acc[j]);
+				*/
+
 				delay(tc);
 			}
 		}//end of comparing Q0Q-1
-
-		//printf("Right shifting AQQ-1...\n");
+		else
+		{
+			gotoxy(0,0);
+			printf("Q0Q-1 ->00...\n");
+			delay(1000);
+		}
+		printf("Right shifting AQQ-1...\n");
+		delay(tc/4);
 		rightshift();
-		initScreen(acc,q,m,x,y+(i+1)*w+(i+1)*o);
-		delay(tc);
+		initScreen(acc,q,m,x,y);
+		delay(tc/2);
 
-		//printf("DECREMENTING count<-%d...\n",n-i-1);
-		delay(tc);
-		//clrscr();
+		printf("DECREMENTING count to:%d...\n",n-i-1);
+		delay(tc/4);
+		initScreen(acc,q,m,x,y);
+	       //	clrscr();
 	}
+	printf("\nFINAL RESULT..\n");
+	delay(tc/2);
+	initScreen(acc,q,m,x,y);
 }
+
 int main()
 {
 	int gd=DETECT,gm=0;
 	int xi=5,yi=50,xtemp,ytemp,mul,mpr;
-	int i=0;
+	int j,i=0;
 	clrscr();
 	setgraphbufsize(16*1024);
 	detectgraph(&gd,&gm);
@@ -352,9 +398,22 @@ int main()
 		rightshift();
 	}*/
        //	initScreen(acc,q,m,5,50+3*w+3*o);
-       booths(5,50);
 
-       getch();
-       closegraph();
-       return 0;
+ //	cleardevice();
+   booths(5,50);
+	/*
+	add(acc,mc);
+	printf("\n-M is :\n");
+				for(j=0;j<n;j++)
+					printf("%d\t",mc[j]);
+
+	printf("\nA is :\n");
+				for( j=0;j<n;j++)
+					printf("%d\t",acc[j]);
+
+	*/
+	getch();
+
+	closegraph();
+	return 0;
 }
