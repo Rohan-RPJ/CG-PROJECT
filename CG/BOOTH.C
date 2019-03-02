@@ -7,7 +7,11 @@
 #define l 10
 #define o 8
 #define dt 2
+<<<<<<< HEAD
 #define n 5
+=======
+#define n 4
+>>>>>>> 6ec9b64aec0b9674ed7584fce57ff89df357a140
 #define dig1col RED
 #define dig0col GREEN
 #define blkcol WHITE
@@ -69,6 +73,7 @@ void drawDig1(int x,int y,int col)
 		line(x,y1,x,y2);
 		//setcolor(GREEN);
 		//delay();
+<<<<<<< HEAD
 	}
 	setcolor(blkcol);
 }
@@ -95,6 +100,32 @@ void makeReg(int bitlen,int x,int y,int blkstyle)
 		makeBlock(x,y,blkstyle);
 		x+=w;
 	}
+=======
+	}
+	setcolor(blkcol);
+}
+
+void makeBlock(int x,int y)
+{
+	//floodfill(x+1,y+1,blkcol);
+	int current_dig=getpixel(x+w/2,y+w/2);
+
+	if(current_dig==dig1col)
+		drawDig1(x,y,bgcol);
+	else
+		drawDig0(x,y,bgcol);
+	rectangle(x,y,x+w,y+w);
+}
+
+void makeReg(int bitlen,int x,int y)
+{
+	int i=0;
+	for(i=0;i<bitlen;i++)
+	{
+		makeBlock(x,y);
+		x+=w;
+  }
+>>>>>>> 6ec9b64aec0b9674ed7584fce57ff89df357a140
 }
 
 void makeScreen(int bitlen,int x,int y)
@@ -132,7 +163,11 @@ void initScreen(int A[n],int Q[n],int M[n],int x,int y)
 	//M[0]=0,M[1]=1,M[2]=0,M[3]=1;
 	//Q[0]=1,Q[1]=1,Q[2]=0,Q[3]=1;
 	//checking the parameter values
+<<<<<<< HEAD
 	makeScreen(bits,x,y);
+=======
+	makeScreen(n,x,y);
+>>>>>>> 6ec9b64aec0b9674ed7584fce57ff89df357a140
 
 	//putting content in accumulator
 	for(i=0;i<bits;i++)
@@ -158,7 +193,11 @@ void initScreen(int A[n],int Q[n],int M[n],int x,int y)
 
 	x+=w;//moving to Q-1
 	{
+<<<<<<< HEAD
 		if( reg[2*bits]==0)
+=======
+		if( reg[2*n]==0)
+>>>>>>> 6ec9b64aec0b9674ed7584fce57ff89df357a140
 			drawDig0(x,y,dig0col);
 		else
 			drawDig1(x,y,dig1col);
@@ -286,7 +325,11 @@ int input()
 	return 1;
 }
 
+<<<<<<< HEAD
 char cmpmsg[]="Comparing Q0Q-1...";
+=======
+char cmpmsg[]="Comparing Q0Q-1....";
+>>>>>>> 6ec9b64aec0b9674ed7584fce57ff89df357a140
 char nmsg[]="";
 char negq[]="Q0Q-1 ->10...";
 char posq[]="Q0Q-1 ->01...";
@@ -426,23 +469,36 @@ void booths(int x,int y)
 int main()
 {
 	int gd=DETECT,gm=0;
+<<<<<<< HEAD
 	int xi=0,yi=0,xtemp,ytemp,mul,mpr;
 	//int j,i=0;
+=======
+	int xi=5,yi=50,xtemp,ytemp,mul,mpr;
+	int j,i=0;
+>>>>>>> 6ec9b64aec0b9674ed7584fce57ff89df357a140
 	clrscr();
 	setgraphbufsize(16*1024);
 	detectgraph(&gd,&gm);
 	initgraph(&gd,&gm,"C:\\TURBOC3\\BGI");
 	setbkcolor(bgcol);
+<<<<<<< HEAD
 	setlinestyle(3,1,1);
 	//textcolor(WHITE);
 	//textbackground(bgcol);
 	cleardevice();
 	//delay(tc);
+=======
+	//textcolor(WHITE);
+	//textbackground(bgcol);
+	cleardevice();
+	delay(tc);
+>>>>>>> 6ec9b64aec0b9674ed7584fce57ff89df357a140
        //	 printf("Enter m and q:");
        //	 scanf("%d%d",&mul,&mpr);
        // printf("\n %x is add..\n",m);
        //	 convert2(mul,&m[0]);
        //	 convert2(mpr,&q[0]);
+<<<<<<< HEAD
 	if(!input())
 	{
 		printf("Multiplicand or Multiplier should be less than 16");
@@ -450,6 +506,9 @@ int main()
 		getch();
 		return 0;
 	}
+=======
+	input();
+>>>>>>> 6ec9b64aec0b9674ed7584fce57ff89df357a140
 	delay(2000);
 	clrscr();
 	cleardevice();
